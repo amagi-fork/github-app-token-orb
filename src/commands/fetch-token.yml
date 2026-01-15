@@ -5,7 +5,7 @@ parameters:
     type: string
     description: "ID of the GitHub App"
   installation_id:
-    type: integer
+    type: string
     description: "The ID of the installation for which the token will be requested (defaults to the ID of the repository's installation)"
   base64_private_key:
     type: string
