@@ -48,3 +48,11 @@ repository_name|GitHub Repository Name|No|""	|string
 ### How to Contribute
 
 We welcome [issues](https://github.com/ostk0069/github-app-token-orb/issues) to and [pull requests](https://github.com/ostk0069/github-app-token-orb/pulls) against this repository!
+
+Publish orb from local
+
+```
+circleci orb pack src > orb.yml
+circleci orb validate orb.yml
+circleci orb publish orb.yml rparjun/github-app-token-orb@0.1.0
+```
