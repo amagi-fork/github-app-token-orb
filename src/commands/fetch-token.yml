@@ -1,5 +1,5 @@
 description: >
-  Fetch Installation Token as GITHUB_APP_TOKEN
+  Fetch GitHub Token as GITHUB_APP_TOKEN
 parameters:
   app_id:
     type: string
@@ -21,7 +21,7 @@ parameters:
 steps:
   - jq/install
   - run:
-      name: Fetch Installation Token
+      name: Fetch GitHub Token
       command: |
         header=$(echo -n '{"alg":"RS256","typ":"JWT"}' | base64 -w 0)
 
@@ -44,3 +44,11 @@ steps:
           | jq -r ".token"
         )
         echo "export << parameters.env_name >>=${installation_token}" >> $BASH_ENV
+        data=$(curl -sS -f -H "Authorization: Bearer $installation_token" -H "Accept: application/vnd.github+json" https://api.github.com/installation/repositorie)
+        if [ $? -eq 0 ]; then
+          printf "Token created with access to:\n%s\n",  "$(echo $data | jq '.repositories[].full_name')"
+          echo
+        else
+          echo "Failed to access GitHub with token"
+          exit 1
+        fi
