@@ -54,5 +54,5 @@ Publish orb from local
 ```
 circleci orb pack src > orb.yml
 circleci orb validate orb.yml
-circleci orb publish orb.yml rparjun/github-app-token-orb@0.1.0
+circleci orb publish orb.yml amagimedia/github-app-token-orb@0.1.0
 ```
