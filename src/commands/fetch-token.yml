@@ -18,8 +18,16 @@ parameters:
     type: string
     default: ""
     description: "GitHub Repository Name"
+  skip_jq:
+    type: boolean
+    default: false
+    description: "Dont install jq; set it as 'true' if it is already available"
+
 steps:
-  - jq/install
+  - unless:
+      condition: << parameters.skip_jq >>
+      steps:
+        - jq/install
   - run:
       name: Fetch GitHub Token
       command: |
