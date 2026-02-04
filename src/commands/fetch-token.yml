@@ -19,7 +19,6 @@ parameters:
     default: ""
     description: "GitHub Repository Name"
 steps:
-  - jq/install
   - run:
       name: Fetch GitHub Token
       command: |
@@ -41,12 +40,12 @@ steps:
             -H "Accept: application/vnd.github.v3+json" \
             "https://api.github.com/app/installations/<< parameters.installation_id >>/access_tokens" \
             $([[ -n "<< parameters.repository_name >>" ]] && echo "-d '{"repository":"<< parameters.repository_name >>"}'" || echo "") \
-          | jq -r ".token"
+          | awk -F'"' '/"token"/ {print $4}' | tr -d '[:space:]'
         )
         echo "export << parameters.env_name >>=${installation_token}" >> $BASH_ENV
         data=$(curl -sS -f -H "Authorization: Bearer $installation_token" -H "Accept: application/vnd.github+json" https://api.github.com/installation/repositories)
         if [ $? -eq 0 ]; then
-          printf "Token created with access to:\n%s\n" "$(echo $data | jq '.repositories[].full_name')"
+          printf "Token created with access to:\n%s\n" "$(echo $data)"
           echo
         else
           echo "Failed to access GitHub with token"
