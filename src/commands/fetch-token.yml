@@ -30,7 +30,7 @@ steps:
 
         now=$(date "+%s")
         iat=$((${now} - 60))
-        exp=$((${now} + (30 * 60)))  # Expires after 30 mins
+        exp=$((${now} + (10 * 60)))  # Expires after 10 mins
         payload=$(echo -n "{\"iat\":${iat},\"exp\":${exp},\"iss\":\"<< parameters.app_id >>\"}" | b64url)
 
         unsigned_token="${header}.${payload}"
