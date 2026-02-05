@@ -22,15 +22,19 @@ steps:
   - run:
       name: Fetch GitHub Token
       command: |
-        header=$(echo -n '{"alg":"RS256","typ":"JWT"}' | base64 -w 0)
+        b64url() {
+          openssl base64 -e -A | tr '+' '-' | tr '/' '_' | tr -d '='
+        }
+
+        header=$(echo -n '{"alg":"RS256","typ":"JWT"}' | b64url)
 
         now=$(date "+%s")
         iat=$((${now} - 60))
-        exp=$((${now} + (10 * 60)))
-        payload=$(echo -n "{\"iat\":${iat},\"exp\":${exp},\"iss\":<< parameters.app_id >>}" | base64 -w 0)
+        exp=$((${now} + (10 * 60)))  # Expires after 10 mins
+        payload=$(echo -n "{\"iat\":${iat},\"exp\":${exp},\"iss\":\"<< parameters.app_id >>\"}" | b64url)
 
         unsigned_token="${header}.${payload}"
-        signed_token=$(echo -n "${unsigned_token}" | openssl dgst -binary -sha256 -sign <(echo << parameters.base64_private_key >> | base64 -d) | base64 -w 0)
+        signed_token=$(echo -n "${unsigned_token}" | openssl dgst -sha256 -sign <(echo "<< parameters.base64_private_key >>" | base64 -d) | b64url)
 
         jwt="${unsigned_token}.${signed_token}"
 
